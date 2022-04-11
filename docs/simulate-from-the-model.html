@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>10 - Simulate from the Model | GLMM Walkthrough</title>
+  <meta name="description" content="This bookdown document was created to communicate the steps in which I have taken to create my generalized linear mixed effects models for the first chapter of my thesis. Throughout this document I will be using data from my “Lone Adult Black Bear” data set to show my work and thought process. At the end of this document the reader will fully understand my modelling process, decisions, and results." />
+  <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="10 - Simulate from the Model | GLMM Walkthrough" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This bookdown document was created to communicate the steps in which I have taken to create my generalized linear mixed effects models for the first chapter of my thesis. Throughout this document I will be using data from my “Lone Adult Black Bear” data set to show my work and thought process. At the end of this document the reader will fully understand my modelling process, decisions, and results." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="10 - Simulate from the Model | GLMM Walkthrough" />
+  
+  <meta name="twitter:description" content="This bookdown document was created to communicate the steps in which I have taken to create my generalized linear mixed effects models for the first chapter of my thesis. Throughout this document I will be using data from my “Lone Adult Black Bear” data set to show my work and thought process. At the end of this document the reader will fully understand my modelling process, decisions, and results." />
+  
+
+<meta name="author" content="Dylan Brassard" />
+
+
+<meta name="date" content="2022-04-11" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="create-a-visual-repersentation-of-the-model.html"/>
+<link rel="next" href="references.html"/>
+<script src="book_assets/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="book_assets/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="book_assets/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="book_assets/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="book_assets/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="book_assets/kePrint-0.0.1/kePrint.js"></script>
+<link href="book_assets/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="index.html#preface">Preface<span></span></a>
+<ul>
+<li><a href="index.html#contents-of-this-document">Contents of this Document<span></span></a></li>
+<li><a href="index.html#structure-of-this-document">Structure of this Document<span></span></a>
+<ul>
+<li><a href="index.html#zuur2016"><span class="citation">(<span>Zuur and Ieno 2016</span>)</span><span></span></a></li>
+</ul></li>
+</ul></li>
+<li><a href="state-appropriate-questions.html#state-appropriate-questions">1 - State appropriate questions<span></span></a>
+<ul>
+<li><a href="state-appropriate-questions.html#primary-question">Primary Question<span></span></a></li>
+<li><a href="state-appropriate-questions.html#secondary-question">Secondary Question<span></span></a></li>
+</ul></li>
+<li><a href="visualize-the-experimental-design.html#visualize-the-experimental-design">2 - Visualize the Experimental Design<span></span></a>
+<ul>
+<li><a href="visualize-the-experimental-design.html#study-area-map">Study Area Map<span></span></a></li>
+<li><a href="visualize-the-experimental-design.html#camera-effort-mapping">Camera Effort Mapping<span></span></a>
+<ul>
+<li><a href="visualize-the-experimental-design.html#plots">Plots<span></span></a></li>
+<li><a href="visualize-the-experimental-design.html#interpretation-and-action">Interpretation and Action<span></span></a></li>
+</ul></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#conduct-data-exploration">3 - Conduct Data Exploration<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#zuur2010-protocol"><span class="citation">(<span>Zuur, Ieno, and Elphick 2010</span>)</span> Protocol<span></span></a></li>
+<li><a href="conduct-data-exploration.html#outliers-in-the-response-and-explanatory-variables">Outliers in the response and explanatory variables<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-1">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-1">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#homogeneity-in-the-response-variable">Homogeneity in the response variable<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-2">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-2">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#normality-in-the-response">Normality in the response<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-3">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-3">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#zero-trouble-y">Zero Trouble Y<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-4">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-4">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#collinearity-in-the-response">Collinearity in the response<span></span></a></li>
+<li><a href="conduct-data-exploration.html#relationships-in-the-response-and-explanatory-variables">Relationships in the response and explanatory variables<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-5">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-5">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#interactions">Interactions<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-6">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-6">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#independence-in-the-response-variable">Independence in the response variable<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-7">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-7">Interpretation and Action<span></span></a></li>
+</ul></li>
+</ul></li>
+<li><a href="identify-the-dependency-structure-in-the-data.html#identify-the-dependency-structure-in-the-data">4 - Identify the Dependency Structure in the Data<span></span></a></li>
+<li><a href="present-the-statistical-model.html#present-the-statistical-model">5 - Present the Statistical Model<span></span></a>
+<ul>
+<li><a href="present-the-statistical-model.html#response-variable">Response Variable<span></span></a></li>
+<li><a href="present-the-statistical-model.html#predictors">Predictors<span></span></a>
+<ul>
+<li><a href="present-the-statistical-model.html#note-regarding-season">Note Regarding Season<span></span></a></li>
+<li><a href="present-the-statistical-model.html#note-about-time-period">Note about time-period<span></span></a></li>
+</ul></li>
+<li><a href="present-the-statistical-model.html#random-term">Random Term<span></span></a></li>
+</ul></li>
+<li><a href="model-fit.html#model-fit">6 - Model Fit<span></span></a>
+<ul>
+<li><a href="model-fit.html#choosing-a-model-structure">Choosing a Model Structure<span></span></a></li>
+<li><a href="model-fit.html#model-selection">Model Selection<span></span></a></li>
+<li><a href="model-fit.html#a-point-i-am-struggling-with">A Point I am Struggling With<span></span></a></li>
+</ul></li>
+<li><a href="model-diagnostics.html#model-diagnostics">7 - Model Diagnostics<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#dharma-residual-package">DHARMa Residual Package<span></span></a></li>
+<li><a href="model-diagnostics.html#qq-and-residual-plot">QQ and Residual Plot<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#plot">Plot<span></span></a></li>
+<li><a href="model-diagnostics.html#interpretation-and-action-8">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="model-diagnostics.html#outlier-plot-and-test">Outlier Plot and Test<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#plots-8">Plots<span></span></a></li>
+<li><a href="model-diagnostics.html#interpretation-and-action-9">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="model-diagnostics.html#dispersion-test">Dispersion Test<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#interpretation-and-action-10">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="model-diagnostics.html#zero-inflation-test">Zero-Inflation Test<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#interpretation-and-action-11">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="model-diagnostics.html#plotting-residuals-against-predictors">Plotting Residuals Against Predictors<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#interpretation-and-action-12">Interpretation and Action<span></span></a></li>
+</ul></li>
+</ul></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpret-and-present-the-numerical-output-of-the-model">8 - Interpret and Present the Numerical Output of the Model<span></span></a>
+<ul>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpreting-the-model-summary">Interpreting the Model Summary<span></span></a></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#contrasting-the-three-way-interaction-of-regionstatusseason">Contrasting the Three-way Interaction of Region:Status:Season<span></span></a>
+<ul>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation">Interpretation<span></span></a></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation-1">Interpretation<span></span></a></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation-2">Interpretation<span></span></a></li>
+</ul></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpreting-the-interaction-effect-of-seasonnumber-of-groups">Interpreting the interaction effect of Season:Number of Groups<span></span></a></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation-3">Interpretation<span></span></a></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#effect-size">Effect Size<span></span></a></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#joint-test">Joint Test<span></span></a></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#contrasting-all-other-included-interactions">Contrasting all other included interactions<span></span></a></li>
+</ul></li>
+<li><a href="create-a-visual-repersentation-of-the-model.html#create-a-visual-repersentation-of-the-model">9 - Create a Visual Repersentation of the Model<span></span></a>
+<ul>
+<li><a href="create-a-visual-repersentation-of-the-model.html#visualizing-the-three-way-interaction-of-seasonstatusregion">Visualizing the three-way interaction of Season:Status:Region<span></span></a>
+<ul>
+<li><a href="create-a-visual-repersentation-of-the-model.html#interpretation-4">Interpretation<span></span></a></li>
+</ul></li>
+<li><a href="create-a-visual-repersentation-of-the-model.html#visualizing-the-two-way-human-use-and-season-interaction">Visualizing the two-way human use and season interaction<span></span></a>
+<ul>
+<li><a href="create-a-visual-repersentation-of-the-model.html#interpretation-5">Interpretation<span></span></a></li>
+</ul></li>
+<li><a href="create-a-visual-repersentation-of-the-model.html#effect-size-1">Effect Size<span></span></a>
+<ul>
+<li><a href="create-a-visual-repersentation-of-the-model.html#interpretation-6">Interpretation<span></span></a></li>
+</ul></li>
+<li><a href="create-a-visual-repersentation-of-the-model.html#plotting-all-other-included-interaction-terms">Plotting all other included interaction terms<span></span></a></li>
+</ul></li>
+<li><a href="simulate-from-the-model.html#simulate-from-the-model">10 - Simulate from the Model<span></span></a></li>
+<li><a href="references.html#references">References<span></span></a></li>
+<li><a href="bonus---dredging-model-possibilities-with-mumin.html#bonus---dredging-model-possibilities-with-mumin">Bonus - Dredging model possibilities with <em>MuMIn</em><span></span></a>
+<ul>
+<li><a href="bonus---dredging-model-possibilities-with-mumin.html#code">Code<span></span></a></li>
+<li><a href="bonus---dredging-model-possibilities-with-mumin.html#table">Table<span></span></a></li>
+<li><a href="bonus---dredging-model-possibilities-with-mumin.html#interpretation-7">Interpretation<span></span></a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">GLMM Walkthrough</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="simulate-from-the-model" class="section level1 unnumbered hasAnchor">
+<h1>10 - Simulate from the Model<a href="simulate-from-the-model.html#simulate-from-the-model" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="create-a-visual-repersentation-of-the-model.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="book_assets/gitbook-2.6.7/js/app.min.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
