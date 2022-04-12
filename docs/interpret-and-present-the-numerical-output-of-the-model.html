@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>8 - Interpret and Present the Numerical Output of the Model | GLMM Walkthrough</title>
+  <meta name="description" content="This bookdown document was created to communicate the steps in which I have taken to create my generalized linear mixed effects models for the first chapter of my thesis. Throughout this document I will be using data from my “Lone Adult Black Bear” data set to show my work and thought process. At the end of this document the reader will fully understand my modelling process, decisions, and results." />
+  <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="8 - Interpret and Present the Numerical Output of the Model | GLMM Walkthrough" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This bookdown document was created to communicate the steps in which I have taken to create my generalized linear mixed effects models for the first chapter of my thesis. Throughout this document I will be using data from my “Lone Adult Black Bear” data set to show my work and thought process. At the end of this document the reader will fully understand my modelling process, decisions, and results." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="8 - Interpret and Present the Numerical Output of the Model | GLMM Walkthrough" />
+  
+  <meta name="twitter:description" content="This bookdown document was created to communicate the steps in which I have taken to create my generalized linear mixed effects models for the first chapter of my thesis. Throughout this document I will be using data from my “Lone Adult Black Bear” data set to show my work and thought process. At the end of this document the reader will fully understand my modelling process, decisions, and results." />
+  
+
+<meta name="author" content="Dylan Brassard" />
+
+
+<meta name="date" content="2022-04-12" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="model-diagnostics.html"/>
+<link rel="next" href="create-a-visual-repersentation-of-the-model.html"/>
+<script src="book_assets/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="book_assets/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="book_assets/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="book_assets/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="book_assets/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="book_assets/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="book_assets/kePrint-0.0.1/kePrint.js"></script>
+<link href="book_assets/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="index.html#preface">Preface<span></span></a>
+<ul>
+<li><a href="index.html#contents-of-this-document">Contents of this Document<span></span></a></li>
+<li><a href="index.html#structure-of-this-document">Structure of this Document<span></span></a>
+<ul>
+<li><a href="index.html#zuur2016"><span class="citation">(<span>Zuur and Ieno 2016</span>)</span><span></span></a></li>
+</ul></li>
+</ul></li>
+<li><a href="state-appropriate-questions.html#state-appropriate-questions">1 - State appropriate questions<span></span></a>
+<ul>
+<li><a href="state-appropriate-questions.html#primary-question">Primary Question<span></span></a></li>
+<li><a href="state-appropriate-questions.html#secondary-question">Secondary Question<span></span></a></li>
+</ul></li>
+<li><a href="visualize-the-experimental-design.html#visualize-the-experimental-design">2 - Visualize the Experimental Design<span></span></a>
+<ul>
+<li><a href="visualize-the-experimental-design.html#study-area-map">Study Area Map<span></span></a></li>
+<li><a href="visualize-the-experimental-design.html#camera-effort-mapping">Camera Effort Mapping<span></span></a>
+<ul>
+<li><a href="visualize-the-experimental-design.html#plots">Plots<span></span></a></li>
+<li><a href="visualize-the-experimental-design.html#interpretation-and-action">Interpretation and Action<span></span></a></li>
+</ul></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#conduct-data-exploration">3 - Conduct Data Exploration<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#zuur2010-protocol"><span class="citation">(<span>Zuur, Ieno, and Elphick 2010</span>)</span> Protocol<span></span></a></li>
+<li><a href="conduct-data-exploration.html#outliers-in-the-response-and-explanatory-variables">Outliers in the response and explanatory variables<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-1">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-1">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#homogeneity-in-the-response-variable">Homogeneity in the response variable<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-2">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-2">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#normality-in-the-response">Normality in the response<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-3">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-3">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#zero-trouble-y">Zero Trouble Y<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-4">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-4">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#collinearity-in-the-response">Collinearity in the response<span></span></a></li>
+<li><a href="conduct-data-exploration.html#relationships-in-the-response-and-explanatory-variables">Relationships in the response and explanatory variables<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-5">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-5">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#interactions">Interactions<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-6">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-6">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="conduct-data-exploration.html#independence-in-the-response-variable">Independence in the response variable<span></span></a>
+<ul>
+<li><a href="conduct-data-exploration.html#plots-7">Plots<span></span></a></li>
+<li><a href="conduct-data-exploration.html#interpretation-and-action-7">Interpretation and Action<span></span></a></li>
+</ul></li>
+</ul></li>
+<li><a href="identify-the-dependency-structure-in-the-data.html#identify-the-dependency-structure-in-the-data">4 - Identify the Dependency Structure in the Data<span></span></a></li>
+<li><a href="present-the-statistical-model.html#present-the-statistical-model">5 - Present the Statistical Model<span></span></a>
+<ul>
+<li><a href="present-the-statistical-model.html#response-variable">Response Variable<span></span></a></li>
+<li><a href="present-the-statistical-model.html#predictors">Predictors<span></span></a>
+<ul>
+<li><a href="present-the-statistical-model.html#note-regarding-season">Note Regarding Season<span></span></a></li>
+<li><a href="present-the-statistical-model.html#note-about-time-period">Note about time-period<span></span></a></li>
+</ul></li>
+<li><a href="present-the-statistical-model.html#random-term">Random Term<span></span></a></li>
+</ul></li>
+<li><a href="model-fit.html#model-fit">6 - Model Fit<span></span></a>
+<ul>
+<li><a href="model-fit.html#choosing-a-model-structure">Choosing a Model Structure<span></span></a></li>
+<li><a href="model-fit.html#model-selection">Model Selection<span></span></a></li>
+<li><a href="model-fit.html#a-point-i-am-struggling-with">A Point I am Struggling With<span></span></a></li>
+</ul></li>
+<li><a href="model-diagnostics.html#model-diagnostics">7 - Model Diagnostics<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#dharma-residual-package">DHARMa Residual Package<span></span></a></li>
+<li><a href="model-diagnostics.html#qq-and-residual-plot">QQ and Residual Plot<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#plot">Plot<span></span></a></li>
+<li><a href="model-diagnostics.html#interpretation-and-action-8">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="model-diagnostics.html#outlier-plot-and-test">Outlier Plot and Test<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#plots-8">Plots<span></span></a></li>
+<li><a href="model-diagnostics.html#interpretation-and-action-9">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="model-diagnostics.html#dispersion-test">Dispersion Test<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#plots-9">Plots<span></span></a></li>
+<li><a href="model-diagnostics.html#interpretation-and-action-10">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="model-diagnostics.html#zero-inflation-test">Zero-Inflation Test<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#plots-10">Plots<span></span></a></li>
+<li><a href="model-diagnostics.html#interpretation-and-action-11">Interpretation and Action<span></span></a></li>
+</ul></li>
+<li><a href="model-diagnostics.html#plotting-residuals-against-predictors">Plotting Residuals Against Predictors<span></span></a>
+<ul>
+<li><a href="model-diagnostics.html#interpretation-and-action-12">Interpretation and Action<span></span></a></li>
+</ul></li>
+</ul></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpret-and-present-the-numerical-output-of-the-model">8 - Interpret and Present the Numerical Output of the Model<span></span></a>
+<ul>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpreting-the-model-summary">Interpreting the Model Summary<span></span></a></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#contrasting-the-three-way-interaction-of-regionstatusseason">Contrasting the Three-way Interaction of Region:Status:Season<span></span></a>
+<ul>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation">Interpretation<span></span></a></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation-1">Interpretation<span></span></a></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation-2">Interpretation<span></span></a></li>
+</ul></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpreting-the-interaction-effect-of-seasonnumber-of-groups">Interpreting the interaction effect of Season:Number of Groups<span></span></a>
+<ul>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation-3">Interpretation<span></span></a></li>
+</ul></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#effect-size">Effect Size<span></span></a>
+<ul>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation-4">Interpretation<span></span></a></li>
+</ul></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#joint-test">Joint Test<span></span></a></li>
+<li><a href="interpret-and-present-the-numerical-output-of-the-model.html#contrasting-all-other-included-interactions">Contrasting all other included interactions<span></span></a></li>
+</ul></li>
+<li><a href="create-a-visual-repersentation-of-the-model.html#create-a-visual-repersentation-of-the-model">9 - Create a Visual Repersentation of the Model<span></span></a>
+<ul>
+<li><a href="create-a-visual-repersentation-of-the-model.html#visualizing-the-three-way-interaction-of-seasonstatusregion">Visualizing the three-way interaction of Season:Status:Region<span></span></a>
+<ul>
+<li><a href="create-a-visual-repersentation-of-the-model.html#interpretation-5">Interpretation<span></span></a></li>
+</ul></li>
+<li><a href="create-a-visual-repersentation-of-the-model.html#visualizing-the-two-way-human-use-and-season-interaction">Visualizing the two-way human use and season interaction<span></span></a>
+<ul>
+<li><a href="create-a-visual-repersentation-of-the-model.html#interpretation-6">Interpretation<span></span></a></li>
+</ul></li>
+<li><a href="create-a-visual-repersentation-of-the-model.html#effect-size-1">Effect Size<span></span></a>
+<ul>
+<li><a href="create-a-visual-repersentation-of-the-model.html#interpretation-7">Interpretation<span></span></a></li>
+</ul></li>
+<li><a href="create-a-visual-repersentation-of-the-model.html#plotting-all-other-included-interaction-terms">Plotting all other included interaction terms<span></span></a></li>
+</ul></li>
+<li><a href="simulate-from-the-model.html#simulate-from-the-model">10 - Simulate from the Model<span></span></a></li>
+<li><a href="bonus---dredging-model-possibilities-with-mumin.html#bonus---dredging-model-possibilities-with-mumin">Bonus - Dredging model possibilities with <em>MuMIn</em><span></span></a>
+<ul>
+<li><a href="bonus---dredging-model-possibilities-with-mumin.html#code">Code<span></span></a></li>
+<li><a href="bonus---dredging-model-possibilities-with-mumin.html#table">Table<span></span></a></li>
+<li><a href="bonus---dredging-model-possibilities-with-mumin.html#interpretation-8">Interpretation<span></span></a></li>
+</ul></li>
+<li><a href="references.html#references">References<span></span></a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">GLMM Walkthrough</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="interpret-and-present-the-numerical-output-of-the-model" class="section level1 unnumbered hasAnchor">
+<h1>8 - Interpret and Present the Numerical Output of the Model<a href="interpret-and-present-the-numerical-output-of-the-model.html#interpret-and-present-the-numerical-output-of-the-model" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmmTMB)</span>
+<span id="cb51-2"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb51-3"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb51-4"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggeffects)</span>
+<span id="cb51-5"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
+<span id="cb51-6"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb51-7"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
+<span id="cb51-8"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb51-9"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-10"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-10" aria-hidden="true" tabindex="-1"></a><span class="co">#Reading in the Final Clean Data from cleaning script 7</span></span>
+<span id="cb51-11"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-11" aria-hidden="true" tabindex="-1"></a>Bear<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">&quot;./Data/7_BlackAdultClean.csv&quot;</span>,<span class="at">header=</span><span class="cn">TRUE</span>,<span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb51-12"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-13"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Designating the categorical predictors as factors which will allow us to order the factor levels within the model summary output</span></span>
+<span id="cb51-14"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-14" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Season<span class="ot">&lt;-</span><span class="fu">as.factor</span>(Bear<span class="sc">$</span>Season)</span>
+<span id="cb51-15"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-15" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Status<span class="ot">&lt;-</span><span class="fu">as.factor</span>(Bear<span class="sc">$</span>Status)</span>
+<span id="cb51-16"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-16" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Region<span class="ot">&lt;-</span><span class="fu">as.factor</span>(Bear<span class="sc">$</span>Region)</span>
+<span id="cb51-17"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-18"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-18" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Season<span class="ot">&lt;-</span> <span class="fu">factor</span>(Bear<span class="sc">$</span>Season,<span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Spring&quot;</span>,<span class="st">&quot;Summer&quot;</span>,<span class="st">&quot;Autumn&quot;</span>))</span>
+<span id="cb51-19"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-19" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Status<span class="ot">&lt;-</span><span class="fu">relevel</span>(Bear<span class="sc">$</span>Status,<span class="st">&quot;Prefire&quot;</span>)</span>
+<span id="cb51-20"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-20" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Region<span class="ot">&lt;-</span><span class="fu">relevel</span>(Bear<span class="sc">$</span>Region,<span class="st">&quot;Unburnt&quot;</span>)</span>
+<span id="cb51-21"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-22"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-22" aria-hidden="true" tabindex="-1"></a><span class="co">#Creating final model. Model selection found in script 1_AdultBlackBearModelFit</span></span>
+<span id="cb51-23"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-23" aria-hidden="true" tabindex="-1"></a>FinalModel<span class="ot">&lt;-</span><span class="fu">glmmTMB</span>(Lone_Adult <span class="sc">~</span>  Region <span class="sc">+</span> Season <span class="sc">+</span>  Status <span class="sc">+</span> Number_of_Groups <span class="sc">+</span> Number_of_Groups<span class="sc">*</span>Season <span class="sc">+</span> Season<span class="sc">*</span>Status <span class="sc">+</span> Season<span class="sc">*</span>Region <span class="sc">+</span> Region<span class="sc">*</span>Status <span class="sc">+</span> Season<span class="sc">*</span>Region<span class="sc">*</span>Status <span class="sc">+</span></span>
+<span id="cb51-24"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-24" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">offset</span>(<span class="fu">log</span>(Effort_per_week)) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Camera_Code),</span>
+<span id="cb51-25"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-25" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> Bear,</span>
+<span id="cb51-26"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-26" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ziformula =</span> <span class="sc">~</span>Season,</span>
+<span id="cb51-27"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-27" aria-hidden="true" tabindex="-1"></a>                    <span class="at">na.action =</span> na.pass,</span>
+<span id="cb51-28"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb51-28" aria-hidden="true" tabindex="-1"></a>                    <span class="at">family =</span> <span class="fu">nbinom1</span>(<span class="at">link =</span> <span class="st">&quot;log&quot;</span>))</span></code></pre></div>
+<div id="interpreting-the-model-summary" class="section level2 unnumbered hasAnchor">
+<h2>Interpreting the Model Summary<a href="interpret-and-present-the-numerical-output-of-the-model.html#interpreting-the-model-summary" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">width =</span> <span class="dv">100</span>)</span>
+<span id="cb52-2"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(FinalModel)</span></code></pre></div>
+<pre><code>##  Family: nbinom1  ( log )
+## Formula:          Lone_Adult ~ Region + Season + Status + Number_of_Groups + Number_of_Groups *  
+##     Season + Season * Status + Season * Region + Region * Status +  
+##     Season * Region * Status + offset(log(Effort_per_week)) +      (1 | Camera_Code)
+## Zero inflation:              ~Season
+## Data: Bear
+## 
+##      AIC      BIC   logLik deviance df.resid 
+##   8177.5   8308.7  -4068.8   8137.5     5206 
+## 
+## Random effects:
+## 
+## Conditional model:
+##  Groups      Name        Variance Std.Dev.
+##  Camera_Code (Intercept) 0.8119   0.9011  
+## Number of obs: 5226, groups:  Camera_Code, 26
+## 
+## Dispersion parameter for nbinom1 family (): 0.564 
+## 
+## Conditional model:
+##                                          Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                             -2.501708   0.297650  -8.405  &lt; 2e-16 ***
+## RegionBurnt                             -0.780231   0.401609  -1.943 0.052044 .  
+## SeasonSummer                             0.509452   0.167306   3.045 0.002327 ** 
+## SeasonAutumn                            -0.835532   0.230132  -3.631 0.000283 ***
+## StatusPostfire                          -0.468390   0.177219  -2.643 0.008217 ** 
+## Number_of_Groups                         0.022201   0.006280   3.535 0.000408 ***
+## SeasonSummer:Number_of_Groups           -0.024291   0.006182  -3.930 8.51e-05 ***
+## SeasonAutumn:Number_of_Groups           -0.020087   0.006850  -2.932 0.003363 ** 
+## SeasonSummer:StatusPostfire              0.178515   0.194352   0.919 0.358350    
+## SeasonAutumn:StatusPostfire              0.447061   0.258648   1.728 0.083907 .  
+## RegionBurnt:SeasonSummer                 0.742372   0.199203   3.727 0.000194 ***
+## RegionBurnt:SeasonAutumn                 1.113030   0.253152   4.397 1.10e-05 ***
+## RegionBurnt:StatusPostfire               0.382298   0.264329   1.446 0.148094    
+## RegionBurnt:SeasonSummer:StatusPostfire -0.660895   0.288971  -2.287 0.022192 *  
+## RegionBurnt:SeasonAutumn:StatusPostfire -0.957644   0.384019  -2.494 0.012640 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Zero-inflation model:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)    0.1583     0.1883   0.841   0.4003    
+## SeasonSummer  -2.7365     0.3748  -7.301 2.86e-13 ***
+## SeasonAutumn  -0.7621     0.3535  -2.156   0.0311 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>This summary is messy and although you can interpret information from this summary output a more concise and clear method of interpreting the effect of the fire is to contrast the Region:Status:Season interaction term. In order to complete this I will be using the package <em>emmeans</em> <span class="citation">(<a href="#ref-emmeans" role="doc-biblioref">Lenth 2021</a>)</span>. The emmeans package calculates the “estimated marginal means” from the a specified model while considering all predictors in the model using a reference grid. When creating the reference grid all used levels of a factor predictor are included as well as the average of each numeric predictor. The estimated marginal mean is calculated for each point within the reference grid meaning that each combination of predictors receives a value and each value in the grid is equally weighted.</p>
+<p>More information can be found here <a href="https://cran.r-project.org/web/packages/emmeans/vignettes/basics.html" class="uri">https://cran.r-project.org/web/packages/emmeans/vignettes/basics.html</a></p>
+</div>
+<div id="contrasting-the-three-way-interaction-of-regionstatusseason" class="section level2 unnumbered hasAnchor">
+<h2>Contrasting the Three-way Interaction of Region:Status:Season<a href="interpret-and-present-the-numerical-output-of-the-model.html#contrasting-the-three-way-interaction-of-regionstatusseason" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Not back transformed</strong></p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a emmeans object summary for the region:status interaction in each season.</span></span>
+<span id="cb54-2"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb54-2" aria-hidden="true" tabindex="-1"></a>emm1<span class="ot">&lt;-</span><span class="fu">emmeans</span>(FinalModel,<span class="at">spec =</span> <span class="sc">~</span> Region<span class="sc">:</span>Status<span class="sc">|</span>Season)</span>
+<span id="cb54-3"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb54-3" aria-hidden="true" tabindex="-1"></a>X<span class="ot">&lt;-</span><span class="fu">contrast</span>(emm1, <span class="at">method =</span> <span class="st">&quot;pairwise&quot;</span>)</span>
+<span id="cb54-4"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb54-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-5"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(emm1)</span></code></pre></div>
+<pre><code>## Season = Spring:
+##  Region  Status    emmean    SE   df lower.CL upper.CL
+##  Unburnt Prefire  -0.4124 0.293 5206   -0.987    0.162
+##  Burnt   Prefire  -1.1927 0.297 5206   -1.776   -0.610
+##  Unburnt Postfire -0.8808 0.296 5206   -1.460   -0.301
+##  Burnt   Postfire -1.2788 0.299 5206   -1.864   -0.693
+## 
+## Season = Summer:
+##  Region  Status    emmean    SE   df lower.CL upper.CL
+##  Unburnt Prefire  -0.0838 0.258 5206   -0.590    0.423
+##  Burnt   Prefire  -0.1216 0.258 5206   -0.628    0.385
+##  Unburnt Postfire -0.3736 0.260 5206   -0.883    0.136
+##  Burnt   Postfire -0.6901 0.262 5206   -1.204   -0.176
+## 
+## Season = Autumn:
+##  Region  Status    emmean    SE   df lower.CL upper.CL
+##  Unburnt Prefire  -1.3975 0.304 5206   -1.994   -0.801
+##  Burnt   Prefire  -1.0647 0.302 5206   -1.656   -0.473
+##  Unburnt Postfire -1.4188 0.306 5206   -2.019   -0.818
+##  Burnt   Postfire -1.6613 0.328 5206   -2.304   -1.018
+## 
+## Results are given on the log (not the response) scale. 
+## Confidence level used: 0.95</code></pre>
+<div id="interpretation" class="section level3 unnumbered hasAnchor">
+<h3>Interpretation<a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Looking at these emmeans we can see the estimated marginal mean of each of the predictor combinations. This table tells us that in the spring the unburnt region prefire had the most bear events, while the burnt postfire had the least bear events. In the summer the unburnt region prefire had the most bear events and the burnt postfire had the least. Lastly in Autumn the prefire burnt region has the most bear events and the burnt region postfire has the least.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Presenting the contrasts with 95% confidence intervals </span></span>
+<span id="cb56-2"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(X)</span></code></pre></div>
+<pre><code>## Season = Spring:
+##  contrast                           estimate     SE   df lower.CL upper.CL
+##  Unburnt Prefire - Burnt Prefire      0.7802 0.4016 5206  -0.2518    1.812
+##  Unburnt Prefire - Unburnt Postfire   0.4684 0.1772 5206   0.0130    0.924
+##  Unburnt Prefire - Burnt Postfire     0.8663 0.4025 5206  -0.1680    1.901
+##  Burnt Prefire - Unburnt Postfire    -0.3118 0.4037 5206  -1.3494    0.726
+##  Burnt Prefire - Burnt Postfire       0.0861 0.1950 5206  -0.4149    0.587
+##  Unburnt Postfire - Burnt Postfire    0.3979 0.4052 5206  -0.6433    1.439
+## 
+## Season = Summer:
+##  contrast                           estimate     SE   df lower.CL upper.CL
+##  Unburnt Prefire - Burnt Prefire      0.0379 0.3641 5206  -0.8977    0.973
+##  Unburnt Prefire - Unburnt Postfire   0.2899 0.0797 5206   0.0850    0.495
+##  Unburnt Prefire - Burnt Postfire     0.6063 0.3665 5206  -0.3354    1.548
+##  Burnt Prefire - Unburnt Postfire     0.2520 0.3648 5206  -0.6855    1.189
+##  Burnt Prefire - Burnt Postfire       0.5685 0.0859 5206   0.3478    0.789
+##  Unburnt Postfire - Burnt Postfire    0.3165 0.3673 5206  -0.6275    1.260
+## 
+## Season = Autumn:
+##  contrast                           estimate     SE   df lower.CL upper.CL
+##  Unburnt Prefire - Burnt Prefire     -0.3328 0.3949 5206  -1.3476    0.682
+##  Unburnt Prefire - Unburnt Postfire   0.0213 0.1886 5206  -0.4633    0.506
+##  Unburnt Prefire - Burnt Postfire     0.2639 0.4145 5206  -0.8014    1.329
+##  Burnt Prefire - Unburnt Postfire     0.3541 0.3990 5206  -0.6712    1.379
+##  Burnt Prefire - Burnt Postfire       0.5967 0.2053 5206   0.0691    1.124
+##  Unburnt Postfire - Burnt Postfire    0.2425 0.4185 5206  -0.8329    1.318
+## 
+## Results are given on the log (not the response) scale. 
+## Confidence level used: 0.95 
+## Conf-level adjustment: tukey method for comparing a family of 4 estimates</code></pre>
+</div>
+<div id="interpretation-1" class="section level3 unnumbered hasAnchor">
+<h3>Interpretation<a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In the spring season we see decreases in bear event intensity across both regions in the post-fire landscape. This decrease in bear event intensity is greatest in the unburnt region. Across regions in the pre-fire time period we see a greater intensity in bear activity in the unburnt landscape compared to postfire. Along with a decrease of bear activity intensity in the pos-fire landscape we also see a reduced usage of the unburnt region compared to the burnt region in the postfire landscape. We see that when we contrast the unburnt region across time-periods we have significant decreases in black bear event intensity.</p>
+<p>In the summer season we see decreases in bear event intensity in both regions in the post-fire landscape. This decrease in bear event intensity is greatest in the burnt region. Across regions in the post-fire time period we see a greater intensity in bear activity in the unburnt landscape compared to postfire. Although overall bear event intensity decreases postfire we see an increased use of the unburnt region compared to the burnt region. We see that when we contrast both the unburnt and burnt regions across time-periods we have significant decreases in black bear event intensity.</p>
+<p>In the autumn season we see a decrease in bear event intensity in both the unburnt and burnt regions postfire. We see a high use of the burnt landscape in the prefire landscape while in the postfire landscape there is an increase in the usage of the unburnt region. We see that when we contrast the burnt region across time-periods we have significant decreases in black bear event intensity.</p>
+<p><strong>Back transformed</strong></p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a emmeans object which contrasts the response variable values of region and status for each season. This represents the BACKTRANSFORMED results.</span></span>
+<span id="cb58-2"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb58-2" aria-hidden="true" tabindex="-1"></a>emm3<span class="ot">&lt;-</span><span class="fu">emmeans</span>(FinalModel,<span class="at">spec =</span> <span class="sc">~</span> Region<span class="sc">:</span>Status<span class="sc">|</span>Season, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb58-3"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb58-3" aria-hidden="true" tabindex="-1"></a>Z<span class="ot">&lt;-</span><span class="fu">contrast</span>(<span class="fu">regrid</span>(emm3), <span class="at">method =</span> <span class="st">&quot;pairwise&quot;</span>)</span>
+<span id="cb58-4"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb58-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-5"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(emm3)</span></code></pre></div>
+<pre><code>## Season = Spring:
+##  Region  Status   response     SE   df lower.CL upper.CL
+##  Unburnt Prefire     0.662 0.1939 5206   0.3729    1.175
+##  Burnt   Prefire     0.303 0.0902 5206   0.1694    0.543
+##  Unburnt Postfire    0.414 0.1225 5206   0.2322    0.740
+##  Burnt   Postfire    0.278 0.0831 5206   0.1550    0.500
+## 
+## Season = Summer:
+##  Region  Status   response     SE   df lower.CL upper.CL
+##  Unburnt Prefire     0.920 0.2377 5206   0.5541    1.526
+##  Burnt   Prefire     0.885 0.2289 5206   0.5335    1.470
+##  Unburnt Postfire    0.688 0.1788 5206   0.4136    1.145
+##  Burnt   Postfire    0.502 0.1316 5206   0.2999    0.839
+## 
+## Season = Autumn:
+##  Region  Status   response     SE   df lower.CL upper.CL
+##  Unburnt Prefire     0.247 0.0752 5206   0.1362    0.449
+##  Burnt   Prefire     0.345 0.1040 5206   0.1909    0.623
+##  Unburnt Postfire    0.242 0.0741 5206   0.1328    0.441
+##  Burnt   Postfire    0.190 0.0623 5206   0.0998    0.361
+## 
+## Confidence level used: 0.95 
+## Intervals are back-transformed from the log scale</code></pre>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Presenting the results with 95% confidence intervals </span></span>
+<span id="cb60-2"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(Z)</span></code></pre></div>
+<pre><code>## Season = Spring:
+##  contrast                           estimate     SE   df lower.CL upper.CL
+##  Unburnt Prefire - Burnt Prefire     0.35863 0.2077 5206 -0.17514    0.892
+##  Unburnt Prefire - Unburnt Postfire  0.24760 0.1171 5206 -0.05333    0.549
+##  Unburnt Prefire - Burnt Postfire    0.38366 0.2052 5206 -0.14370    0.911
+##  Burnt Prefire - Unburnt Postfire   -0.11103 0.1468 5206 -0.48817    0.266
+##  Burnt Prefire - Burnt Postfire      0.02503 0.0571 5206 -0.12171    0.172
+##  Unburnt Postfire - Burnt Postfire   0.13606 0.1431 5206 -0.23175    0.504
+## 
+## Season = Summer:
+##  contrast                           estimate     SE   df lower.CL upper.CL
+##  Unburnt Prefire - Burnt Prefire     0.03417 0.3286 5206 -0.81040    0.879
+##  Unburnt Prefire - Unburnt Postfire  0.23142 0.0866 5206  0.00897    0.454
+##  Unburnt Prefire - Burnt Postfire    0.41812 0.2706 5206 -0.27718    1.113
+##  Burnt Prefire - Unburnt Postfire    0.19726 0.2891 5206 -0.54581    0.940
+##  Burnt Prefire - Burnt Postfire      0.38395 0.1129 5206  0.09394    0.674
+##  Unburnt Postfire - Burnt Postfire   0.18670 0.2209 5206 -0.38098    0.754
+## 
+## Season = Autumn:
+##  contrast                           estimate     SE   df lower.CL upper.CL
+##  Unburnt Prefire - Burnt Prefire    -0.09762 0.1188 5206 -0.40304    0.208
+##  Unburnt Prefire - Unburnt Postfire  0.00522 0.0461 5206 -0.11335    0.124
+##  Unburnt Prefire - Burnt Postfire    0.05734 0.0906 5206 -0.17547    0.290
+##  Burnt Prefire - Unburnt Postfire    0.10284 0.1191 5206 -0.20315    0.409
+##  Burnt Prefire - Burnt Postfire      0.15496 0.0667 5206 -0.01653    0.326
+##  Unburnt Postfire - Burnt Postfire   0.05212 0.0904 5206 -0.18010    0.284
+## 
+## Confidence level used: 0.95 
+## Conf-level adjustment: tukey method for comparing a family of 4 estimates</code></pre>
+</div>
+<div id="interpretation-2" class="section level3 unnumbered hasAnchor">
+<h3>Interpretation<a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In the back transformed results we can only see significant results in the <em>Summer Unburnt and Burnt</em> regions. By my understanding these estimate values represent the response variable (Indicated by type = response) meaning that the estimate is the change in the number of bear events per week per camera.</p>
+<p>If this is the case then we would see the following decreases in bear use intensity after the fire as represented by the number of bear events captured per camera per week.</p>
+<p><strong>Spring</strong> Unburnt - 0.248 (-0.053/0.549) Burnt - 0.025 (-0.122/0.172)
+<strong>Summer</strong> Unburnt - 0.231 (0.009/0.454) Burnt - 0.384 (0.094/0.674)
+<strong>Autumn</strong> Unburnt - 0.005 (-0.113/0.124) Burnt - 0.155 (-0.017/0.326)</p>
+<p>In addition to these results we do not see any significant contrasts of region between pre and post fire in any season as opposed to the log transformed results above. This suggests that adult black bears have not used the two regions differently pre-fire compared to post-fire.</p>
+</div>
+</div>
+<div id="interpreting-the-interaction-effect-of-seasonnumber-of-groups" class="section level2 unnumbered hasAnchor">
+<h2>Interpreting the interaction effect of Season:Number of Groups<a href="interpret-and-present-the-numerical-output-of-the-model.html#interpreting-the-interaction-effect-of-seasonnumber-of-groups" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Using the emtrends function from the <span class="citation">(<a href="#ref-emmeans" role="doc-biblioref">Lenth 2021</a>)</span> function we can calculate the effect of the number of human groups on bear activity for each season.</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emtrends</span>(FinalModel, pairwise <span class="sc">~</span> Season, <span class="at">var =</span> <span class="st">&quot;Number_of_Groups&quot;</span>)</span></code></pre></div>
+<pre><code>## $emtrends
+##  Season Number_of_Groups.trend      SE   df lower.CL upper.CL
+##  Spring                0.02220 0.00628 5206  0.00989 0.034512
+##  Summer               -0.00209 0.00114 5206 -0.00433 0.000147
+##  Autumn                0.00211 0.00317 5206 -0.00411 0.008335
+## 
+## Results are averaged over the levels of: Region, Status 
+## Confidence level used: 0.95 
+## 
+## $contrasts
+##  contrast        estimate      SE   df t.ratio p.value
+##  Spring - Summer   0.0243 0.00618 5206   3.930  0.0003
+##  Spring - Autumn   0.0201 0.00685 5206   2.932  0.0095
+##  Summer - Autumn  -0.0042 0.00323 5206  -1.301  0.3947
+## 
+## Results are averaged over the levels of: Region, Status 
+## P value adjustment: tukey method for comparing a family of 3 estimates</code></pre>
+<div id="interpretation-3" class="section level3 unnumbered hasAnchor">
+<h3>Interpretation<a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>We can see that both spring and autumn have positive relationships between the number of human groups using a trail and the number of bears using the trail. Summer meanwhile shows a negative trend which is much more expected. Looking at the confidence intervals the spring season is the only season which shows a significant relationship between human groups and bear groups. Meanwhile if we look at the contrasts we can see that the effect seen in spring is significantly different than the effects seen in both summer and autumn while the contrast between autumn and summer appears to not be significant.</p>
+</div>
+</div>
+<div id="effect-size" class="section level2 unnumbered hasAnchor">
+<h2>Effect Size<a href="interpret-and-present-the-numerical-output-of-the-model.html#effect-size" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The following code calculates the effect sizes of each contrast using the function <em>eff_size</em> from the package <span class="citation">(<a href="#ref-emmeans" role="doc-biblioref">Lenth 2021</a>)</span>.</p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb64-1" aria-hidden="true" tabindex="-1"></a>EFF1<span class="ot">&lt;-</span><span class="fu">eff_size</span>(emm3, <span class="at">sigma =</span> <span class="fu">sigma</span>(FinalModel), <span class="at">edf =</span> <span class="cn">Inf</span>, <span class="at">method =</span> <span class="st">&quot;pairwise&quot;</span>)</span>
+<span id="cb64-2"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(EFF1)</span></code></pre></div>
+<pre><code>## Season = Spring:
+##  contrast                           effect.size    SE   df lower.CL upper.CL
+##  Unburnt Prefire - Burnt Prefire         1.3823 0.712 5206  -0.0126    2.777
+##  Unburnt Prefire - Unburnt Postfire      0.8298 0.314 5206   0.2143    1.445
+##  Unburnt Prefire - Burnt Postfire        1.5349 0.713 5206   0.1369    2.933
+##  Burnt Prefire - Unburnt Postfire       -0.5525 0.715 5206  -1.9547    0.850
+##  Burnt Prefire - Burnt Postfire          0.1525 0.345 5206  -0.5246    0.830
+##  Unburnt Postfire - Burnt Postfire       0.7050 0.718 5206  -0.7022    2.112
+## 
+## Season = Summer:
+##  contrast                           effect.size    SE   df lower.CL upper.CL
+##  Unburnt Prefire - Burnt Prefire         0.0671 0.645 5206  -1.1974    1.332
+##  Unburnt Prefire - Unburnt Postfire      0.5136 0.141 5206   0.2367    0.790
+##  Unburnt Prefire - Burnt Postfire        1.0742 0.649 5206  -0.1986    2.347
+##  Burnt Prefire - Unburnt Postfire        0.4465 0.646 5206  -0.8205    1.714
+##  Burnt Prefire - Burnt Postfire          1.0072 0.152 5206   0.7089    1.305
+##  Unburnt Postfire - Burnt Postfire       0.5607 0.651 5206  -0.7151    1.836
+## 
+## Season = Autumn:
+##  contrast                           effect.size    SE   df lower.CL upper.CL
+##  Unburnt Prefire - Burnt Prefire        -0.5896 0.700 5206  -1.9612    0.782
+##  Unburnt Prefire - Unburnt Postfire      0.0378 0.334 5206  -0.6172    0.693
+##  Unburnt Prefire - Burnt Postfire        0.4675 0.734 5206  -0.9723    1.907
+##  Burnt Prefire - Unburnt Postfire        0.6274 0.707 5206  -0.7584    2.013
+##  Burnt Prefire - Burnt Postfire          1.0571 0.364 5206   0.3441    1.770
+##  Unburnt Postfire - Burnt Postfire       0.4297 0.741 5206  -1.0238    1.883
+## 
+## sigma used for effect sizes: 0.5644 
+## Confidence level used: 0.95</code></pre>
+<div id="interpretation-4" class="section level3 unnumbered hasAnchor">
+<h3>Interpretation<a href="interpret-and-present-the-numerical-output-of-the-model.html#interpretation-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>I am unsure how to interpret the results from the effect size function at this time. I had originally thought that by back transforming my estimated marginal means (as above) I had received my effect sizes, however, these differ from the effect size function found above. I assume that these values should be the same however that may be incorrect and I will look into that further.</p>
+</div>
+</div>
+<div id="joint-test" class="section level2 unnumbered hasAnchor">
+<h2>Joint Test<a href="interpret-and-present-the-numerical-output-of-the-model.html#joint-test" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">joint_tests</span>(FinalModel, <span class="at">by =</span> <span class="st">&quot;Season&quot;</span>)</span></code></pre></div>
+<pre><code>## Season = Spring:
+##  model term       df1  df2 F.ratio p.value
+##  Region             1 5206   2.389  0.1222
+##  Status             1 5206   4.458  0.0348
+##  Number_of_Groups   1 5206  12.497  0.0004
+##  Region:Status      1 5206   2.092  0.1482
+## 
+## Season = Summer:
+##  model term       df1  df2 F.ratio p.value
+##  Region             1 5206   0.241  0.6236
+##  Status             1 5206  53.967  &lt;.0001
+##  Number_of_Groups   1 5206   3.355  0.0671
+##  Region:Status      1 5206   5.623  0.0178
+## 
+## Season = Autumn:
+##  model term       df1  df2 F.ratio p.value
+##  Region             1 5206   0.014  0.9060
+##  Status             1 5206   4.919  0.0266
+##  Number_of_Groups   1 5206   0.444  0.5053
+##  Region:Status      1 5206   4.257  0.0391</code></pre>
+</div>
+<div id="contrasting-all-other-included-interactions" class="section level2 unnumbered hasAnchor">
+<h2>Contrasting all other included interactions<a href="interpret-and-present-the-numerical-output-of-the-model.html#contrasting-all-other-included-interactions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb68-1" aria-hidden="true" tabindex="-1"></a>RegionSeason<span class="ot">&lt;-</span><span class="fu">emmeans</span>(FinalModel,<span class="at">spec =</span> <span class="sc">~</span> Region<span class="sc">:</span>Season, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb68-2"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb68-2" aria-hidden="true" tabindex="-1"></a>RSea<span class="ot">&lt;-</span><span class="fu">contrast</span>(<span class="fu">regrid</span>(RegionSeason), <span class="at">method =</span> <span class="st">&quot;pairwise&quot;</span>)</span>
+<span id="cb68-3"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb68-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-4"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(RSea)</span></code></pre></div>
+<pre><code>##  contrast                        estimate     SE   df lower.CL upper.CL
+##  Unburnt Spring - Burnt Spring     0.2332 0.1623 5206 -0.22958   0.6959
+##  Unburnt Spring - Unburnt Summer  -0.2718 0.1006 5206 -0.55866   0.0152
+##  Unburnt Spring - Burnt Summer    -0.1426 0.2251 5206 -0.78422   0.4990
+##  Unburnt Spring - Unburnt Autumn   0.2792 0.1012 5206 -0.00925   0.5677
+##  Unburnt Spring - Burnt Autumn     0.2679 0.1648 5206 -0.20188   0.7377
+##  Burnt Spring - Unburnt Summer    -0.5049 0.2193 5206 -1.12998   0.1201
+##  Burnt Spring - Burnt Summer      -0.3758 0.1060 5206 -0.67796  -0.0736
+##  Burnt Spring - Unburnt Autumn     0.0460 0.1082 5206 -0.26240   0.3545
+##  Burnt Spring - Burnt Autumn       0.0347 0.0552 5206 -0.12262   0.1921
+##  Unburnt Summer - Burnt Summer     0.1292 0.2648 5206 -0.62576   0.8841
+##  Unburnt Summer - Unburnt Autumn   0.5510 0.1478 5206  0.12974   0.9722
+##  Unburnt Summer - Burnt Autumn     0.5397 0.2174 5206 -0.08009   1.1594
+##  Burnt Summer - Unburnt Autumn     0.4218 0.1853 5206 -0.10648   0.9501
+##  Burnt Summer - Burnt Autumn       0.4105 0.1163 5206  0.07893   0.7421
+##  Unburnt Autumn - Burnt Autumn    -0.0113 0.0958 5206 -0.28426   0.2617
+## 
+## Results are averaged over the levels of: Status 
+## Confidence level used: 0.95 
+## Conf-level adjustment: tukey method for comparing a family of 6 estimates</code></pre>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb70-1" aria-hidden="true" tabindex="-1"></a>StatusSeason<span class="ot">&lt;-</span><span class="fu">emmeans</span>(FinalModel,<span class="at">spec =</span> <span class="sc">~</span> Status<span class="sc">:</span>Season, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb70-2"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb70-2" aria-hidden="true" tabindex="-1"></a>StatSea<span class="ot">&lt;-</span><span class="fu">contrast</span>(<span class="fu">regrid</span>(StatusSeason), <span class="at">method =</span> <span class="st">&quot;pairwise&quot;</span>)</span>
+<span id="cb70-3"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb70-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-4"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb70-4" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(StatSea)</span></code></pre></div>
+<pre><code>##  contrast                          estimate     SE   df lower.CL upper.CL
+##  Prefire Spring - Postfire Spring    0.1085 0.0562 5206  -0.0517   0.2687
+##  Prefire Spring - Prefire Summer    -0.4542 0.1042 5206  -0.7512  -0.1573
+##  Prefire Spring - Postfire Summer   -0.1393 0.0666 5206  -0.3292   0.0506
+##  Prefire Spring - Prefire Autumn     0.1562 0.0737 5206  -0.0538   0.3662
+##  Prefire Spring - Postfire Autumn    0.2338 0.0764 5206   0.0160   0.4516
+##  Postfire Spring - Prefire Summer   -0.5627 0.1150 5206  -0.8906  -0.2348
+##  Postfire Spring - Postfire Summer  -0.2478 0.0677 5206  -0.4409  -0.0548
+##  Postfire Spring - Prefire Autumn    0.0477 0.0596 5206  -0.1222   0.2175
+##  Postfire Spring - Postfire Autumn   0.1253 0.0583 5206  -0.0408   0.2914
+##  Prefire Summer - Postfire Summer    0.3149 0.0708 5206   0.1131   0.5167
+##  Prefire Summer - Prefire Autumn     0.6104 0.1232 5206   0.2592   0.9617
+##  Prefire Summer - Postfire Autumn    0.6880 0.1333 5206   0.3080   1.0681
+##  Postfire Summer - Prefire Autumn    0.2955 0.0742 5206   0.0841   0.5069
+##  Postfire Summer - Postfire Autumn   0.3731 0.0807 5206   0.1430   0.6033
+##  Prefire Autumn - Postfire Autumn    0.0776 0.0383 5206  -0.0314   0.1867
+## 
+## Results are averaged over the levels of: Region 
+## Confidence level used: 0.95 
+## Conf-level adjustment: tukey method for comparing a family of 6 estimates</code></pre>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb72-1" aria-hidden="true" tabindex="-1"></a>RegionStatus<span class="ot">&lt;-</span><span class="fu">emmeans</span>(FinalModel,<span class="at">spec =</span> <span class="sc">~</span> Region<span class="sc">:</span>Status, <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb72-2"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb72-2" aria-hidden="true" tabindex="-1"></a>RStat<span class="ot">&lt;-</span><span class="fu">contrast</span>(<span class="fu">regrid</span>(RegionStatus), <span class="at">method =</span> <span class="st">&quot;pairwise&quot;</span>)</span>
+<span id="cb72-3"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb72-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-4"><a href="interpret-and-present-the-numerical-output-of-the-model.html#cb72-4" aria-hidden="true" tabindex="-1"></a><span class="fu">confint</span>(RStat)</span></code></pre></div>
+<pre><code>##  contrast                           estimate     SE   df lower.CL upper.CL
+##  Unburnt Prefire - Burnt Prefire      0.0795 0.1811 5206  -0.3860    0.545
+##  Unburnt Prefire - Unburnt Postfire   0.1217 0.0529 5206  -0.0142    0.258
+##  Unburnt Prefire - Burnt Postfire     0.2338 0.1591 5206  -0.1750    0.643
+##  Burnt Prefire - Unburnt Postfire     0.0423 0.1587 5206  -0.3657    0.450
+##  Burnt Prefire - Burnt Postfire       0.1543 0.0538 5206   0.0160    0.293
+##  Unburnt Postfire - Burnt Postfire    0.1120 0.1326 5206  -0.2287    0.453
+## 
+## Results are averaged over the levels of: Season 
+## Confidence level used: 0.95 
+## Conf-level adjustment: tukey method for comparing a family of 4 estimates</code></pre>
+
+</div>
+</div>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-emmeans" class="csl-entry">
+Lenth, Russell V. 2021. <span>“Emmeans: Estimated Marginal Means, Aka Least-Squares Means.”</span> <a href="https://CRAN.R-project.org/package=emmeans">https://CRAN.R-project.org/package=emmeans</a>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="model-diagnostics.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="create-a-visual-repersentation-of-the-model.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="book_assets/gitbook-2.6.7/js/app.min.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="book_assets/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
