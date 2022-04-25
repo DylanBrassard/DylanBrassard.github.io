@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>References | GLMM Walkthrough</title>
+  <title>Appendix - Dredging model possibilities with MuMIn | GLMM Walkthrough</title>
   <meta name="description" content="This bookdown document was created to communicate the steps in which I have taken to create my generalized linear mixed effects models for the first chapter of my thesis. Throughout this document I will be using data from my “Lone Adult Black Bear” data set to show my work and thought process. At the end of this document the reader will fully understand my modelling process, decisions, and results." />
   <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="References | GLMM Walkthrough" />
+  <meta property="og:title" content="Appendix - Dredging model possibilities with MuMIn | GLMM Walkthrough" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This bookdown document was created to communicate the steps in which I have taken to create my generalized linear mixed effects models for the first chapter of my thesis. Throughout this document I will be using data from my “Lone Adult Black Bear” data set to show my work and thought process. At the end of this document the reader will fully understand my modelling process, decisions, and results." />
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="References | GLMM Walkthrough" />
+  <meta name="twitter:title" content="Appendix - Dredging model possibilities with MuMIn | GLMM Walkthrough" />
   
   <meta name="twitter:description" content="This bookdown document was created to communicate the steps in which I have taken to create my generalized linear mixed effects models for the first chapter of my thesis. Throughout this document I will be using data from my “Lone Adult Black Bear” data set to show my work and thought process. At the end of this document the reader will fully understand my modelling process, decisions, and results." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="appendix---dredging-model-possibilities-with-mumin.html"/>
-
+<link rel="prev" href="simulate-from-the-model.html"/>
+<link rel="next" href="references.html"/>
 <script src="book_assets/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="book_assets/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -325,43 +325,579 @@ div.csl-indent {
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="references" class="section level1 unnumbered hasAnchor">
-<h1>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="appendix---dredging-model-possibilities-with-mumin" class="section level1 unnumbered hasAnchor">
+<h1>Appendix - Dredging model possibilities with <em>MuMIn</em><a href="appendix---dredging-model-possibilities-with-mumin.html#appendix---dredging-model-possibilities-with-mumin" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>I completed model dredging with the command <em>dredge</em> in the package <em>MuMin</em> <span class="citation">(<a href="#ref-MuMIn" role="doc-biblioref">Barton 2020</a>)</span> to create a set of models with all possible combinations of fixed effects terms found in my global model. When creating this dredge I set the inclusion of the zero-inflation factor and the offset term as required which means they are present in all the models of the dredge. The dredge function calculates each models’ log-likelihood, AICc, delta AICc, and the weight against all other models. I will include the code which I used to complete the dredge function and a table of all models within 2 delta AICc. Running the function of the dredge takes upwards of 12 hours and therefore I will not include the entire output here, however, I do have a copy saved separately.</p>
+<div id="code" class="section level2 unnumbered hasAnchor">
+<h2>Code<a href="appendix---dredging-model-possibilities-with-mumin.html#code" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb87-1"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmmTMB)</span>
+<span id="cb87-2"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MuMIn)</span>
+<span id="cb87-3"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-3" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;D:/DataAndAnalysis&quot;</span>)</span>
+<span id="cb87-4"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-5"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-5" aria-hidden="true" tabindex="-1"></a><span class="co">#Reading in the Final Clean Data from cleaning script 7</span></span>
+<span id="cb87-6"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-6" aria-hidden="true" tabindex="-1"></a>Bear<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">&quot;./Datasets/FinalDatasets/ForExploration/7_BlackAdultClean.csv&quot;</span>,<span class="at">header=</span><span class="cn">TRUE</span>,<span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb87-7"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-7" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Season<span class="ot">&lt;-</span><span class="fu">as.factor</span>(Bear<span class="sc">$</span>Season)</span>
+<span id="cb87-8"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-8" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Status<span class="ot">&lt;-</span><span class="fu">as.factor</span>(Bear<span class="sc">$</span>Status)</span>
+<span id="cb87-9"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-9" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Region<span class="ot">&lt;-</span><span class="fu">as.factor</span>(Bear<span class="sc">$</span>Region)</span>
+<span id="cb87-10"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-11"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-11" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Season<span class="ot">&lt;-</span> <span class="fu">factor</span>(Bear<span class="sc">$</span>Season,<span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&quot;Spring&quot;</span>,<span class="st">&quot;Summer&quot;</span>,<span class="st">&quot;Autumn&quot;</span>))</span>
+<span id="cb87-12"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-12" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Status<span class="ot">&lt;-</span><span class="fu">relevel</span>(Bear<span class="sc">$</span>Status,<span class="st">&quot;Prefire&quot;</span>)</span>
+<span id="cb87-13"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-13" aria-hidden="true" tabindex="-1"></a>Bear<span class="sc">$</span>Region<span class="ot">&lt;-</span><span class="fu">relevel</span>(Bear<span class="sc">$</span>Region,<span class="st">&quot;Unburnt&quot;</span>)</span>
+<span id="cb87-14"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-15"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-15" aria-hidden="true" tabindex="-1"></a><span class="co">#Creating final model. Model selection found in script 1_AdultBlackBearModelFit</span></span>
+<span id="cb87-16"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-16" aria-hidden="true" tabindex="-1"></a>FinalModel<span class="ot">&lt;-</span><span class="fu">glmmTMB</span>(Lone_Adult <span class="sc">~</span>  Region <span class="sc">+</span> Season <span class="sc">+</span>  Status <span class="sc">+</span> Number_of_Groups <span class="sc">+</span> Number_of_Groups<span class="sc">*</span>Season <span class="sc">+</span> Season<span class="sc">*</span>Status <span class="sc">+</span> Season<span class="sc">*</span>Region <span class="sc">+</span> Region<span class="sc">*</span>Status <span class="sc">+</span> Season<span class="sc">*</span>Region<span class="sc">*</span>Status <span class="sc">+</span></span>
+<span id="cb87-17"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-17" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">offset</span>(<span class="fu">log</span>(Effort_per_week)) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Camera_Code),</span>
+<span id="cb87-18"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-18" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> Bear,</span>
+<span id="cb87-19"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-19" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ziformula =</span> <span class="sc">~</span>Season,</span>
+<span id="cb87-20"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-20" aria-hidden="true" tabindex="-1"></a>                    <span class="at">na.action =</span> na.pass,</span>
+<span id="cb87-21"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-21" aria-hidden="true" tabindex="-1"></a>                    <span class="at">family =</span> <span class="fu">nbinom1</span>(<span class="at">link =</span> <span class="st">&quot;log&quot;</span>))</span>
+<span id="cb87-22"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-23"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-23" aria-hidden="true" tabindex="-1"></a><span class="co">#Completing the dredge</span></span>
+<span id="cb87-24"><a href="appendix---dredging-model-possibilities-with-mumin.html#cb87-24" aria-hidden="true" tabindex="-1"></a>Dredge<span class="ot">&lt;-</span><span class="fu">dredge</span>(FinalModel, <span class="at">fixed =</span> <span class="fu">c</span>(<span class="st">&quot;cond(offset(Effort_per_week))&quot;</span>,<span class="st">&quot;zi(Season)&quot;</span>))</span></code></pre></div>
+</div>
+<div id="table" class="section level2 unnumbered hasAnchor">
+<h2>Table<a href="appendix---dredging-model-possibilities-with-mumin.html#table" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div style="border: 1px solid #ddd; padding: 5px; overflow-x: scroll; width:100%; ">
+<table class=" lightable-paper lightable-hover" style='font-family: "Arial Narrow", arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'>
+<thead>
+<tr>
+<th style="text-align:right;">
+cond.Int
+</th>
+<th style="text-align:right;">
+zi.Int
+</th>
+<th style="text-align:left;">
+disp.Int
+</th>
+<th style="text-align:right;">
+Humans
+</th>
+<th style="text-align:left;">
+Region
+</th>
+<th style="text-align:left;">
+Season
+</th>
+<th style="text-align:left;">
+Status
+</th>
+<th style="text-align:left;">
+Humans.Region
+</th>
+<th style="text-align:left;">
+Humans.Season
+</th>
+<th style="text-align:left;">
+Humans.Status
+</th>
+<th style="text-align:left;">
+Region.Season
+</th>
+<th style="text-align:left;">
+Region.Status
+</th>
+<th style="text-align:left;">
+Season.Status
+</th>
+<th style="text-align:left;">
+Humans.Region.Season
+</th>
+<th style="text-align:left;">
+Humans.Region.Status
+</th>
+<th style="text-align:left;">
+Humans.Season.Status
+</th>
+<th style="text-align:left;">
+Region.Season.Status
+</th>
+<th style="text-align:left;">
+Humans.Season.Status.Region
+</th>
+<th style="text-align:left;">
+offset
+</th>
+<th style="text-align:left;">
+zi
+</th>
+<th style="text-align:right;">
+df
+</th>
+<th style="text-align:right;">
+logLik
+</th>
+<th style="text-align:right;">
+AICc
+</th>
+<th style="text-align:right;">
+delta
+</th>
+<th style="text-align:right;">
+weight
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+-3.601090
+</td>
+<td style="text-align:right;">
+-0.6037293
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+0.0021143
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+-4068.751
+</td>
+<td style="text-align:right;">
+8177.664
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.1836902
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-3.529966
+</td>
+<td style="text-align:right;">
+-0.5762859
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+0.0022761
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+-4072.920
+</td>
+<td style="text-align:right;">
+8177.944
+</td>
+<td style="text-align:right;">
+0.2798567
+</td>
+<td style="text-align:right;">
+0.1597040
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-3.602903
+</td>
+<td style="text-align:right;">
+-0.6110782
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+0.0015810
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+-4068.571
+</td>
+<td style="text-align:right;">
+8179.320
+</td>
+<td style="text-align:right;">
+1.6563612
+</td>
+<td style="text-align:right;">
+0.0802438
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-3.533596
+</td>
+<td style="text-align:right;">
+-0.5827482
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+0.0017774
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+-4072.759
+</td>
+<td style="text-align:right;">
+8179.636
+</td>
+<td style="text-align:right;">
+1.9716238
+</td>
+<td style="text-align:right;">
+0.0685414
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-3.602365
+</td>
+<td style="text-align:right;">
+-0.6049524
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+0.0022582
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+-4068.742
+</td>
+<td style="text-align:right;">
+8179.662
+</td>
+<td style="text-align:right;">
+1.9980601
+</td>
+<td style="text-align:right;">
+0.0676414
+</td>
+</tr>
+</tbody>
+</table>
+</div></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<div id="interpretation-8" class="section level2 unnumbered hasAnchor">
+<h2>Interpretation<a href="appendix---dredging-model-possibilities-with-mumin.html#interpretation-8" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The dredge was completed for all possible models and these 5 models represent a weight of 0.559821 out of 335 total models. The top model of the dredge is consistent with the final model from my step wise backward selection which increases my confidence that my backward selection was done correctly.</p>
+<p>All models share the following predictors: Human groups, Region, Season, Status</p>
+<p>As well as the following interactions Human Groups:Season Region:Season <strong>Region:Status (Fire Effect)</strong></p>
+<p>Only 3 of the top 5 model include the three way interaction of Season:Status:Region. All models included the interaction of human groups:season.</p>
+<p>All models do not include: Human Groups:Region:Season<br />
+Human Groups:Region:Status<br />
+Human Groups:Season:Status Human Groups:Season:Status:Region</p>
 
+</div>
+</div>
+<h3>References<a href="references.html#references" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div class="csl-entry">
-Bai, Wei, Mei Dong, Longhai Li, Cindy Feng, and Wei Xu. 2021. <span>“Randomized Quantile Residuals for Diagnosing Zero-Inflated Generalized Linear Mixed Models with Applications to Microbiome Count Data.”</span> <em>BMC Bioinformatics</em> 22 (1): 564. <a href="https://doi.org/10.1186/s12859-021-04371-6">https://doi.org/10.1186/s12859-021-04371-6</a>.
-</div>
-<div class="csl-entry">
+<div id="ref-MuMIn" class="csl-entry">
 Barton, Kamil. 2020. <span>“MuMIn: Multi-Model Inference.”</span> <a href="https://CRAN.R-project.org/package=MuMIn">https://CRAN.R-project.org/package=MuMIn</a>.
-</div>
-<div class="csl-entry">
-Dunn, Peter K., and Gordon K. Smyth. 1996. <span>“Randomized Quantile Residuals.”</span> <em>Journal of Computational and Graphical Statistics</em> 5 (3): 236–44. <a href="https://doi.org/10.1080/10618600.1996.10474708">https://doi.org/10.1080/10618600.1996.10474708</a>.
-</div>
-<div class="csl-entry">
-Feng, Cindy, Longhai Li, and Alireza Sadeghpour. 2020. <span>“A Comparison of Residual Diagnosis Tools for Diagnosing Regression Models for Count Data.”</span> <em>BMC Medical Research Methodology</em> 20 (1): 175. <a href="https://doi.org/10.1186/s12874-020-01055-2">https://doi.org/10.1186/s12874-020-01055-2</a>.
-</div>
-<div class="csl-entry">
-Hartig, Florian. 2022. <em>DHARMa: Residual Diagnostics for Hierarchical <span>#</span><span>#</span> (Multi-Level / Mixed) Regression Models</em>. <a href="http://florianhartig.github.io/DHARMa/">http://florianhartig.github.io/DHARMa/</a>.
-</div>
-<div class="csl-entry">
-———. n.d. <span>“testOutliers: Test for Outliers in DHARMa: Residual Diagnostics for Hierarchical (Multi-Level / Mixed) Regression Models.”</span> <a href="https://rdrr.io/cran/DHARMa/man/testOutliers.html">https://rdrr.io/cran/DHARMa/man/testOutliers.html</a>.
-</div>
-<div class="csl-entry">
-Lenth, Russell V. 2021. <span>“Emmeans: Estimated Marginal Means, Aka Least-Squares Means.”</span> <a href="https://CRAN.R-project.org/package=emmeans">https://CRAN.R-project.org/package=emmeans</a>.
-</div>
-<div class="csl-entry">
-Zeileis, Achim, and Torsten Hothorn. 2002. <span>“Diagnostic Checking in Regression Relationships”</span> 2. <a href="https://CRAN.R-project.org/doc/Rnews/">https://CRAN.R-project.org/doc/Rnews/</a>.
-</div>
-<div class="csl-entry">
-Zuur, Alain F., and Elena N. Ieno. 2016. <span>“A Protocol for Conducting and Presenting Results of Regression<span>-</span>Type Analyses.”</span> <em>Methods in Ecology and Evolution</em> 7 (6): 636–45.
-</div>
-<div class="csl-entry">
-Zuur, Alain F., Elena N. Ieno, and Chris S. Elphick. 2010. <span>“A Protocol for Data Exploration to Avoid Common Statistical Problems: <span><em>Data Exploration</em></span>.”</span> <em>Methods in Ecology and Evolution</em> 1 (1): 3–14. <a href="https://doi.org/10.1111/j.2041-210X.2009.00001.x">https://doi.org/10.1111/j.2041-210X.2009.00001.x</a>.
-</div>
-<div class="csl-entry">
-Zuur, Alain F., Elena N. Ieno, Neil Walker, Anatoly A. Saveliev, and Graham M. Smith. 2009. <em>Mixed Effects Models and Extensions in Ecology with R</em>. Statistics for Biology and Health. New York, NY: Springer New York. <a href="https://doi.org/10.1007/978-0-387-87458-6">https://doi.org/10.1007/978-0-387-87458-6</a>.
-</div>
 </div>
 </div>
             </section>
@@ -369,8 +905,8 @@ Zuur, Alain F., Elena N. Ieno, Neil Walker, Anatoly A. Saveliev, and Graham M. S
           </div>
         </div>
       </div>
-<a href="appendix---dredging-model-possibilities-with-mumin.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="simulate-from-the-model.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="book_assets/gitbook-2.6.7/js/app.min.js"></script>
